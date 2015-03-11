@@ -9,15 +9,11 @@ namespace WinTail
     /// </summary>
     class ConsoleReaderActor : UntypedActor
     {
-        private readonly IActorRef validationActor;
-
         public const string ExitCommand = "exit";
         public const string StartCommand = "start";
-        private IActorRef _consoleWriterActor;
         
-        public ConsoleReaderActor(ActorRef validationActor)
+        public ConsoleReaderActor()
         {
-            this.validationActor = validationActor;
         }
 
         protected override void OnReceive(object message)
@@ -44,7 +40,7 @@ namespace WinTail
             }
 
             // otherwise, just hand message off to validation actor (by telling its actor ref)
-            validationActor.Tell(message);
+            Context.ActorSelection("/user/validationActor").Tell(message);
         }
 
         private void DoPrintInstructions()

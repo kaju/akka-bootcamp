@@ -10,13 +10,13 @@
     /// </summary>
     public class FileObserver : IDisposable
     {
-        private readonly ActorRef _tailActor;
+        private readonly IActorRef _tailActor;
         private readonly string _absoluteFilePath;
         private FileSystemWatcher _watcher;
         private readonly string _fileDir;
         private readonly string _fileNameOnly;
 
-        public FileObserver(ActorRef tailActor, string absoluteFilePath)
+        public FileObserver(IActorRef tailActor, string absoluteFilePath)
         {
             _tailActor = tailActor;
             _absoluteFilePath = absoluteFilePath;
@@ -62,7 +62,7 @@
         /// <param name="e"></param>
         void OnFileError(object sender, ErrorEventArgs e)
         {
-            _tailActor.Tell(new TailActor.FileError(_fileNameOnly, e.GetException().Message), ActorRef.NoSender);
+            _tailActor.Tell(new TailActor.FileError(_fileNameOnly, e.GetException().Message), ActorRefs.NoSender);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@
             {
                 // here we use a special ActorRef.NoSender
                 // since this event can happen many times, this is a little microoptimization
-                _tailActor.Tell(new TailActor.FileWrite(e.Name), ActorRef.NoSender);
+                _tailActor.Tell(new TailActor.FileWrite(e.Name), ActorRefs.NoSender);
             }
 
         }

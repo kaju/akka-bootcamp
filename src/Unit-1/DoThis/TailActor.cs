@@ -7,7 +7,7 @@
 
     public class TailActor : UntypedActor
     {
-        private readonly ActorRef reporterActor;
+        private readonly IActorRef reporterActor;
 
         private readonly string filePath;
 
@@ -93,7 +93,7 @@
             }
         }
 
-        public TailActor(ActorRef reporterActor, string filePath)
+        public TailActor(IActorRef reporterActor, string filePath)
         {
             this.reporterActor = reporterActor;
             this.filePath = filePath;

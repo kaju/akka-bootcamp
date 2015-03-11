@@ -17,10 +17,10 @@
 
         protected override SupervisorStrategy SupervisorStrategy()
         {
-            return new OneForOneStrategy(
-                10, // maxNumberOfRetries
-                TimeSpan.FromSeconds(30), // duration
-                decider: x =>
+            int? retries = 10;
+            TimeSpan? ts = TimeSpan.FromSeconds(30);
+
+            return new OneForOneStrategy(retries, ts, x =>
                 {
                     //Maybe we consider ArithmeticException to not be application critical
                     //so we just ignore the error and keep going.
@@ -56,9 +56,9 @@
         {
             private readonly string filePath;
 
-            private readonly ActorRef reporter;
+            private readonly IActorRef reporter;
 
-            public StartTail(string filePath, ActorRef reporter)
+            public StartTail(string filePath, IActorRef reporter)
             {
                 this.filePath = filePath;
                 this.reporter = reporter;
@@ -72,7 +72,7 @@
                 }
             }
 
-            public ActorRef Reporter
+            public IActorRef Reporter
             {
                 get
                 {
