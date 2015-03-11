@@ -13,8 +13,12 @@ namespace WinTail
             MyActorSystem = ActorSystem.Create("MyActorSystem");
 
             // time to make your first actors!
-            var consoleWriterActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()));
-            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor(consoleWriterActor)));
+            var consoleWriterProp = Props.Create(() => new ConsoleWriterActor());
+            var consoleWriterActor = MyActorSystem.ActorOf(consoleWriterProp);
+            var validationActorProp = Props.Create(() => new ValidationActor(consoleWriterActor));
+            var validationActor = MyActorSystem.ActorOf(validationActorProp);
+            var consoleReaderProp = Props.Create(() => new ConsoleReaderActor(validationActor));
+            var consoleReaderActor = MyActorSystem.ActorOf(consoleReaderProp);
 
             // tell console reader to begin
             consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);

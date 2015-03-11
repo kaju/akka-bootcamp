@@ -9,13 +9,15 @@ namespace WinTail
     /// </summary>
     class ConsoleReaderActor : UntypedActor
     {
+        private readonly IActorRef validationActor;
+
         public const string ExitCommand = "exit";
         public const string StartCommand = "start";
         private IActorRef _consoleWriterActor;
-
-        public ConsoleReaderActor(IActorRef consoleWriterActor)
+        
+        public ConsoleReaderActor(ActorRef validationActor)
         {
-            _consoleWriterActor = consoleWriterActor;
+            this.validationActor = validationActor;
         }
 
         protected override void OnReceive(object message)
@@ -24,10 +26,7 @@ namespace WinTail
             {
                 DoPrintInstructions();
             }
-            else if (message is Messages.InputError)
-            {
-                _consoleWriterActor.Tell(message as Messages.InputError);
-            }
+            
             GetAndValidateInput();
             
             // continue reading messages from the console
@@ -37,35 +36,15 @@ namespace WinTail
         private void GetAndValidateInput()
         {
             var message = Console.ReadLine();
-
-            if (string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message) && String.Equals(message, ExitCommand, StringComparison.OrdinalIgnoreCase))
             {
-                Self.Tell(new Messages.NullInputError("No input recieved."));
-            }
-            else if (message.Equals(ExitCommand))
-            {
+                // if user typed ExitCommand, shut down the entire actor system (allows the process to exit)
                 Context.System.Shutdown();
+                return;
             }
-            else
-            {
-                var valid = IsVaid(message);
 
-                if (valid)
-                {
-                    _consoleWriterActor.Tell(new Messages.InputSuccess("Thank you, message was valid."));
-                    
-                }
-                else
-                {
-                    _consoleWriterActor.Tell(new Messages.InputError("Invalid: input had an odd number of characters."));
-                }
-                Self.Tell(new Messages.ContinueProcessing());
-            }
-        }
-
-        private bool IsVaid(string message)
-        {
-            return message.Length % 2 == 0;
+            // otherwise, just hand message off to validation actor (by telling its actor ref)
+            validationActor.Tell(message);
         }
 
         private void DoPrintInstructions()
