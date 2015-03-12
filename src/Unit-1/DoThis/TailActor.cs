@@ -98,6 +98,20 @@
             this.reporterActor = reporterActor;
             this.filePath = filePath;
 
+        }
+
+        protected override void PostStop()
+        {
+            observer.Dispose();
+            observer = null;
+            fileStreamReader.Close();
+            fileStreamReader.Dispose();
+            base.PostStop();
+        }
+
+        protected override void PreStart()
+        {
+
             this.observer = new FileObserver(this.Self, filePath);
             observer.Start();
 
@@ -108,7 +122,7 @@
 
             // read the initial contents of the file and send it to console as first message
             var text = this.fileStreamReader.ReadToEnd();
-            
+
             this.Self.Tell(new InitialRead(filePath, text));
         }
 
