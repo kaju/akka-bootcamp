@@ -2,6 +2,8 @@
 
 namespace WinTail
 {
+    using Akka.Actor;
+
     #region Program
     class Program
     {
