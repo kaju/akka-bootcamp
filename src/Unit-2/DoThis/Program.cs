@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Configuration;
 using System.Windows.Forms;
 using Akka.Actor;
+using Akka.Configuration.Hocon;
 
 namespace ChartApp
 {
@@ -18,7 +20,10 @@ namespace ChartApp
         [STAThread]
         static void Main()
         {
-            ChartActors = ActorSystem.Create("ChartActors");
+            var section = (AkkaConfigurationSection)ConfigurationManager.GetSection("akka");
+            var config = section.AkkaConfig;
+            ChartActors = ActorSystem.Create("ChartActors", config);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Main());
