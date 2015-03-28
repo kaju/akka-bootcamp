@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Akka.Actor;
 
@@ -10,6 +11,10 @@ namespace ChartApp.Actors
     {
         #region Messages
 
+        public class TogglePause
+        {
+            
+        }
 
         public class AddSeries
         {
@@ -57,19 +62,28 @@ namespace ChartApp.Actors
         private readonly Chart _chart;
         private Dictionary<string, Series> _seriesIndex;
 
-        public ChartingActor(Chart chart) : this(chart, new Dictionary<string, Series>())
+        private readonly Button _pauseButton;
+
+        public ChartingActor(Chart chart, Button pauseButton) : this(chart, new Dictionary<string, Series>(), pauseButton)
         {
         }
 
-        public ChartingActor(Chart chart, Dictionary<string, Series> seriesIndex)
+        public ChartingActor(Chart chart, Dictionary<string, Series> seriesIndex, Button pauseButton)
         {
             _chart = chart;
             _seriesIndex = seriesIndex;
+            _pauseButton = pauseButton;
 
             Receive<InitializeChart>(x => this.HandleInitialize(x));
             Receive<AddSeries>(x => this.HandleAddSeries(x));
             Receive<RemoveSeries>(x => this.HandleRemoveSeries(x));
             Receive<Metric>(x => this.HandleMetrics(x));
+            Receive<TogglePause>(
+                x =>
+                    {
+                        SetPauseButtonText(true);
+                        Become(Paused, false);               
+                    });
         }
 
         #region Individual Message Type Handlers
@@ -138,7 +152,38 @@ namespace ChartApp.Actors
                 SetChartBoundaries();
             }
         }
+
+        // Actors/ChartingActor.cs - inside Individual Message Type Handlers region
+        private void HandleMetricsPaused(Metric metric)
+        {
+            if (!string.IsNullOrEmpty(metric.Series) && _seriesIndex.ContainsKey(metric.Series))
+            {
+                var series = _seriesIndex[metric.Series];
+                series.Points.AddXY(xPosCounter++, 0.0d); //set the Y value to zero when we're paused
+                while (series.Points.Count > MaxPoints) series.Points.RemoveAt(0);
+                SetChartBoundaries();
+            }
+        }
+
+
         #endregion
+
+        // Actors/ChartingActor.cs - just after the Charting method
+        private void Paused()
+        {
+            Receive<Metric>(metric => HandleMetricsPaused(metric));
+            Receive<TogglePause>(pause =>
+            {
+                SetPauseButtonText(false);
+                Unbecome();
+            });
+        }
+
+        // Actors/ChartingActor.cs - add to the very bottom of the ChartingActor class
+        private void SetPauseButtonText(bool paused)
+        {
+            _pauseButton.Text = string.Format("{0}", !paused ? "PAUSE ||" : "RESUME ->");
+        }
 
         private void SetChartBoundaries()
         {
