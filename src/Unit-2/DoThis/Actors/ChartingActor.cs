@@ -7,7 +7,7 @@ using Akka.Actor;
 
 namespace ChartApp.Actors
 {
-    public class ChartingActor : ReceiveActor
+    public class ChartingActor : ReceiveActor, WithUnboundedStash
     {
         #region Messages
 
@@ -172,10 +172,15 @@ namespace ChartApp.Actors
         private void Paused()
         {
             Receive<Metric>(metric => HandleMetricsPaused(metric));
+            Receive<AddSeries>(x => Stash.Stash());
+            Receive<RemoveSeries>(x => Stash.Stash());
+
             Receive<TogglePause>(pause =>
             {
                 SetPauseButtonText(false);
                 Unbecome();
+                Stash.UnstashAll();
+
             });
         }
 
@@ -204,5 +209,7 @@ namespace ChartApp.Actors
                 area.AxisY.Maximum = maxAxisY;
             }
         }
+
+        public IStash Stash { get; set; }
     }
 }
