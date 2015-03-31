@@ -7,7 +7,7 @@ using Akka.Actor;
 
 namespace ChartApp.Actors
 {
-    public class ChartingActor : ReceiveActor, WithUnboundedStash
+    public class ChartingActor : ReceiveActor, IWithUnboundedStash
     {
         #region Messages
 
