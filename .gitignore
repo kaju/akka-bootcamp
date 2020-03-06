@@ -19,6 +19,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# Rider
+.idea
+
 # Roslyn cache directories
 *.ide/
 
