@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Messages.fs" />
+    <Compile Include="FileUtilities.fs" />
     <Compile Include="Actors.fs" />
     <Compile Include="Program.fs" />
     <Content Include="packages.config" />
