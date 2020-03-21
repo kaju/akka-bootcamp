@@ -90,6 +90,12 @@ module Actors =
         let fileStream = new FileStream(Path.GetFullPath(filePath), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
         let fileStreamReader = new StreamReader(fileStream, Text.Encoding.UTF8)
         let text = fileStreamReader.ReadToEnd ()
+
+        mailbox.Defer <| fun () ->
+            (observer :> IDisposable).Dispose()
+            (fileStream :> IDisposable).Dispose()
+            (fileStreamReader :> IDisposable).Dispose()
+
         do mailbox.Self <! InitialRead(filePath, text)
 
         let rec loop() = actor {
