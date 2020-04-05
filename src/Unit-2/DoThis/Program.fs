@@ -1,17 +1,25 @@
 ﻿module Program
 
 open System
-open System.Windows.Forms
+open Gtk
 open Akka.Actor
 open Akka.FSharp
 open Akka.Configuration.Hocon
 open System.Configuration
 open ChartApp
 
-let chartActors = System.create "ChartActors" (Configuration.load ())
+    [<EntryPoint>]
+    let main argv =
+        let chartActors = System.create "ChartActors" (Configuration.load ())
 
-Application.EnableVisualStyles ()
-Application.SetCompatibleTextRenderingDefault false
+        Application.Init()
 
-[<STAThread>]
-do Application.Run (Form.load chartActors)
+        let app = new Application("org.akkabootcamp.chartapp", GLib.ApplicationFlags.None)
+        app.Register(GLib.Cancellable.Current) |> ignore;
+
+        let win = new MainWindow()
+        app.AddWindow(win)
+
+        win.Show()
+        Application.Run()
+        0
