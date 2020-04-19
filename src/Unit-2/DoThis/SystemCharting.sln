@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ChartApp", "ChartApp.fsproj", "{13098CAC-50DC-4B47-9B74-5E0B11112662}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.Microcharts", "..\..\..\..\Avalonia.Microcharts\src\Avalonia.Microcharts\Avalonia.Microcharts.csproj", "{FADF320D-F4C0-4FC5-9D8C-B1A115CB3226}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{13098CAC-50DC-4B47-9B74-5E0B11112662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13098CAC-50DC-4B47-9B74-5E0B11112662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13098CAC-50DC-4B47-9B74-5E0B11112662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FADF320D-F4C0-4FC5-9D8C-B1A115CB3226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FADF320D-F4C0-4FC5-9D8C-B1A115CB3226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FADF320D-F4C0-4FC5-9D8C-B1A115CB3226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FADF320D-F4C0-4FC5-9D8C-B1A115CB3226}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
